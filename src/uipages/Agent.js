@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "../uipages/Agent.css";
 
 function Agent() {
+  const navigate = useNavigate();
   const [agent, getAgent] = useState([]);
   const [agentdetails, setagentdetails] = useState([]);
+  // const [deletedagent, setdeletedagent] = useState([]);
   const getAgentsList = () => {
     fetch("http://localhost:8088/api/agent")
       .then((res) => {
@@ -31,6 +35,28 @@ function Agent() {
         console.error(err.message);
       });
   };
+
+  const deleteAgent = (id) => {
+    if (window.confirm("Do you wnant to remove this agent?")) {
+      fetch("http://localhost:8088/api/agent/" + id, {
+        method: "DELETE",
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          console.log("agent with id ${id} is deleted");
+          getAgent(data);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+      toast.success("Agent deleted successfully");
+      navigate("/");
+    }
+  };
+
   useEffect(() => {
     getAgentsList();
   }, []);
@@ -66,6 +92,16 @@ function Agent() {
                     }}
                   >
                     Get Customers
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => {
+                      deleteAgent(a.id);
+                    }}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -128,7 +164,7 @@ function Agent() {
                 Close
               </button>
               <button type="button" className="btn btn-primary">
-                Save changes
+                Add Customer
               </button>
             </div>
           </div>
