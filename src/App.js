@@ -7,6 +7,7 @@ import AddPolicy from "./uipages/AddPolicy";
 import Agent from "./uipages/Agent";
 import AdminAddPolicy from "./uipages/AdminAddPolicy";
 import AdminAddCustomer from "./uipages/AdminAddCustomer";
+import Payment from "./uipages/Payment";
 
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/agents" element={<Agent />} />
           <Route path="/adminaddpolicy" element={<AdminAddPolicy />} />
           <Route path="/adminaddcustomer" element={<AdminAddCustomer />} />
+          <Route path="/payments" element={<Payment />} />
         </Routes>
       </BrowserRouter>
     </div>
