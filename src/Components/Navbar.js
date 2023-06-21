@@ -1,6 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Navbar() {
+  //const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("jwttoken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("rolename");
+    toast.success("Logged out successfully");
+    //navigate("/login");
+  };
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-primary text-white">
@@ -27,17 +37,28 @@ function Navbar() {
               <a className="nav-link" href="/customer">
                 Customers
               </a>
-              <a className="nav-link" href="/">
-                Pricing
+              <a className="nav-link" href="/agents">
+                Agents
               </a>
+              <a className="nav-link " href="/payments" tabindex="-1">
+                Payments
+              </a>
+              <span> </span>
               <a
-                className="nav-link disabled"
-                href="/"
+                className="nav-link "
+                href="/login"
                 tabindex="-1"
-                aria-disabled="true"
+                style={{ float: "right" }}
               >
-                Disabled
+                Log In
               </a>
+              <a className="nav-link " href="/register" tabindex="-1">
+                Sign Up
+              </a>
+              <button
+                className="nav-link logout-button"
+                onClick={handleLogout}
+              ></button>
             </div>
           </div>
         </div>

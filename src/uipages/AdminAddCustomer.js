@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../uipages/AdminAddCustomer.css";
 import { toast } from "react-toastify";
+import Navbar from "../Components/Navbar";
 
 const CustomerForm = () => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const CustomerForm = () => {
 
   return (
     <div>
+      <Navbar></Navbar>
       <section className=" bg-dark">
         <div className="container py-2 h-25">
           <div className="row d-flex justify-content-center align-items-center">

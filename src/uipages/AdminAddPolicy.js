@@ -2,8 +2,9 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Navbar from "../Components/Navbar";
 
-function AdminAddPolicy() {
+const AdminAddpolicy = () => {
   const navigate = useNavigate();
   const [policyName, setpolicyName] = useState("");
   const [policyType, setpolicyType] = useState("");
@@ -11,36 +12,37 @@ function AdminAddPolicy() {
   const [policyDuration, setpolicyDuration] = useState("");
   const [policyExpiryDate, setpolicyExpiryDate] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8083/api/policy/", {
-        policyName,
-        policyType,
-        policyPremiumAmount,
-        policyDuration,
-        policyExpiryDate,
-      });
-      if (response.status == 200) {
-        setpolicyName("");
-        setpolicyType("");
-        setpolicyPremiumAmount("");
-        setpolicyDuration("");
-        setpolicyExpiryDate("");
-      } else {
-        // Handle error response
-        toast.error("Policy not added");
-        console.error("Error creating customer");
-      }
+      const policyData = {
+        policyName: policyName,
+        policyType: policyType,
+        policyPremiumAmount: policyPremiumAmount,
+        policyDuration: policyDuration,
+        policyExpiryDate: policyExpiryDate,
+      };
+      const response = await axios.post(
+        "http://localhost:8083/api/policy",
+        policyData
+      );
+      console.log("Policy added successfully");
+      toast.success("Policy added succesfully");
+      navigate("/");
+      setpolicyName("");
+      setpolicyType("");
+      setpolicyPremiumAmount("");
+      setpolicyDuration("");
+      setpolicyExpiryDate("");
     } catch (error) {
       console.error(error.message);
+      toast.error("Please try again later");
     }
-    toast.success("Policy Added Successfully");
-    navigate("/");
   };
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <Navbar></Navbar>
+      <form>
         <div class="row">
           <div class="col-md-6 mb-4">
             <div class="form-outline">
@@ -113,7 +115,7 @@ function AdminAddPolicy() {
                 value={policyExpiryDate}
                 onChange={(e) => setpolicyExpiryDate(e.target.value)}
               />
-              <label class="form-label" for="">
+              <label class="form-label" for="phoneNumber">
                 Policy Expiry date
               </label>
             </div>
@@ -124,11 +126,12 @@ function AdminAddPolicy() {
           <input
             class="btn btn-primary btn-lg"
             type="submit"
-            value="Add/Update Policy"
+            value="Add Policy"
+            onClick={handleSubmit}
           />
         </div>
       </form>
     </div>
   );
-}
-export default AdminAddPolicy;
+};
+export default AdminAddpolicy;

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Navbar from "../Components/Navbar";
 
 function Payment() {
   const [payment, getpayment] = useState([]);
@@ -29,7 +30,7 @@ function Payment() {
         console.error("could not fetch customer details");
       }
     } catch (err) {
-      console.error(err.message);
+      console.error(err.message());
     }
   };
   useEffect(() => {
@@ -37,6 +38,7 @@ function Payment() {
   }, []);
   return (
     <div>
+      <Navbar></Navbar>
       <table className="table table-hover">
         <thead>
           <tr>

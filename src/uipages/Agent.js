@@ -1,13 +1,25 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import Navbar from "../Components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../uipages/Agent.css";
 
 function Agent() {
   const navigate = useNavigate();
+
   const [agent, getAgent] = useState([]);
   const [agentdetails, setagentdetails] = useState([]);
+  //const [customerData, setcustomerData] = useState([]);
+  const [selectedagent, setselectedagent] = useState(null);
+  const [agentId, setagentId] = useState("");
+  const [cid, setcid] = useState("");
+  const customerData = {
+    agentId: agentId,
+    cid: cid,
+  };
   // const [deletedagent, setdeletedagent] = useState([]);
+
   const getAgentsList = () => {
     fetch("http://localhost:8088/api/agent")
       .then((res) => {
@@ -28,7 +40,7 @@ function Agent() {
       })
       .then((data) => {
         console.log(data);
-        console.log(data.customers);
+        sessionStorage.setItem("agentId", id);
         setagentdetails(data.customers);
       })
       .catch((err) => {
@@ -57,12 +69,53 @@ function Agent() {
     }
   };
 
+  const deleteCustomerFromAgent = (aid, cid) => {
+    fetch("http://localhost:8088/api/agent/" + aid + "/del/customer/" + cid, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        toast.success("Customer Deleted Successfully");
+        navigate("/agents");
+        return res.json();
+      })
+
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
+  const openWindow = (data) => {
+    setselectedagent(data);
+    setagentId(data.agentId);
+    setcid("");
+  };
+  const closeWindow = () => {
+    setselectedagent(null);
+    setagentId("");
+    setcid("");
+  };
+
+  const addCustomertoAgent = async () => {
+    const agentIdVariable = sessionStorage.getItem("agentId");
+    try {
+      await axios.post(
+        "http://localhost:8088/api/agent/" + agentIdVariable + "/addcustomer",
+        customerData
+      );
+      toast.success("Customer added successfully");
+      getAgentsList();
+    } catch (error) {
+      console.error(error.message);
+      toast.error("try again later");
+    }
+  };
+
   useEffect(() => {
     getAgentsList();
   }, []);
 
   return (
     <div>
+      <Navbar></Navbar>
       <table className="table table-hover">
         <thead>
           <tr>
@@ -73,13 +126,7 @@ function Agent() {
         {agent.map((a) => {
           return (
             <tbody>
-              <tr
-              //data-bs-toggle="modal"
-              //data-bs-target="#exampleModal"
-              // onClick={() => {
-              //  getAgentDetailsById(a.id);
-              // }}
-              >
+              <tr>
                 <th scope="row">{a.id}</th>
                 <td>{a.name}</td>
                 <td>
@@ -91,17 +138,16 @@ function Agent() {
                       getAgentDetailsById(a.id);
                     }}
                   >
-                    Get Customers
+                    Customer Details
                   </button>
                 </td>
+
                 <td>
                   <button
-                    className="btn btn-danger"
-                    onClick={() => {
-                      deleteAgent(a.id);
-                    }}
+                    className="btn btn-primary"
+                    onClick={() => openWindow(a)}
                   >
-                    Delete
+                    Add Customer
                   </button>
                 </td>
               </tr>
@@ -149,6 +195,20 @@ function Agent() {
                         <td>{g.dateofBirth}</td>
                         <td>{g.phoneNumber}</td>
                         <td>{g.policyId}</td>
+                        <td>
+                          <button
+                            className="btn btn-danger"
+                            data-bs-dismiss="modal"
+                            onClick={() =>
+                              deleteCustomerFromAgent(
+                                sessionStorage.getItem("agentId"),
+                                g.customerID
+                              )
+                            }
+                          >
+                            Delete
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   );
@@ -163,13 +223,61 @@ function Agent() {
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary">
-                Add Customer
-              </button>
             </div>
           </div>
         </div>
       </div>
+      {selectedagent && (
+        <>
+          <h3>ADD CUSTOMER</h3>
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <div class="form-outline">
+                  <label class="form-label" for="agentId">
+                    Agent ID
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    name="agentId"
+                    value={selectedagent.id}
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <div class="form-outline">
+                  <label class="form-label" for="customerId">
+                    Customer ID
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    name="customerID"
+                    value={cid}
+                    onChange={(e) => setcid(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={addCustomertoAgent}
+            >
+              Save Changes
+            </button>
+            <span> </span>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={closeWindow}
+            >
+              Cancel
+            </button>
+          </form>
+        </>
+      )}
     </div>
   );
 }
