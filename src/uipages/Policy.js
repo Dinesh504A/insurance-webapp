@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
 import { toast } from "react-toastify";
 import AdminAddpolicy from "./AdminAddPolicy";
+import { useNavigate } from "react-router-dom";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function Policy() {
+  const navigate = useNavigate();
   const [policies, getPolicy] = useState([]);
   const [selectedPolicy, setselectedPolicy] = useState(null);
   const [updatedData, setupdatedData] = useState({
@@ -29,26 +33,38 @@ function Policy() {
       });
   };
   const deletePolicy = (id) => {
-    if (window.confirm("Do you want to remove this policy?")) {
-      fetch("http://localhost:8083/api/policy/delete/" + id, {
-        method: "DELETE",
-      })
-        .then((res) => {
-          return res.json();
-        })
+    console.log("delete started");
+    confirmAlert({
+      title: "Confirmation",
+      message: "Are you sure you want to delete the policy ?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            confirmDelete(id);
+          },
+        },
+        {
+          label: "No",
+        },
+      ],
+    });
+  };
+  const confirmDelete = async (id) => {
+    try {
+      console.log("fetching delete details");
+      await axios.delete("http://localhost:8083/api/policy/delete/" + id);
+      getPoliciesList();
+      toast.success("Policy deleted successfully");
 
-        .then((res) => {
-          console.log(res);
-          console.log("policy with id ${id} is deleted", id);
-          getPolicy(res);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-      toast.success("policy deleted successfully");
+      console.log("redirecting to policies list");
+    } catch (error) {
+      console.error("Error deleting policy", error.message());
+      toast.error("Please Try again!");
     }
   };
   const openUpdatePage = (policy) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setselectedPolicy(policy);
     setupdatedData({
       policyID: policy.policyID,
@@ -95,139 +111,89 @@ function Policy() {
     <>
       <Navbar></Navbar>
       <div>
-        {policies.map((p) => {
-          return (
-            <div className="d-inline-flex m-3">
-              <div className="card ">
-                <div className="card-body">
-                  <p className="card-text" color="blue">
-                    <b>POLICY IDENTIFIER : </b>
-                    {p.policyID}
-                  </p>
-                  <p className="card-text">
-                    <b>POLICY NAME : </b>
-                    {p.policyName}
-                  </p>
-                  <p className="card-text">
-                    <b>POLICY TYPE : </b>
-                    {p.policyType}
-                  </p>
-                  <p className="card-text">
-                    <b>POLICY DURATION(IN YRS) : </b>
-                    {p.policyDuration}
-                  </p>
-                  <p className="card-text">
-                    <b>POLICY PREMIUM AMOUNT : </b>
-                    {p.policyPremiumAmount}
-                  </p>
-                  <p className="card-text">
-                    <b>POLICY EXPIRY DATE : </b>
-                    {p.policyExpiryDate}
-                  </p>
-                  <button
-                    className="btn btn-warning"
-                    onClick={() => openUpdatePage(p)}
-                  >
-                    Update
-                  </button>
-                  <span> </span>
-                  <a
-                    href="/"
-                    className="btn btn-danger"
-                    onClick={() => {
-                      deletePolicy(p.policyID);
-                    }}
-                  >
-                    Delete
-                  </a>
-                </div>
-              </div>
-            </div>
-          );
-        })}
         {selectedPolicy && (
           <>
             <h3>Update Policy</h3>
             <form>
-              <div class="row">
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+              <div className="row">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy ID
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyId"
                       value={updatedData.policyID}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy Name
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyName"
                       value={updatedData.policyName}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy Type
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyType"
                       value={updatedData.policyType}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy Premium Amount
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyPremiumAmount"
                       value={updatedData.policyPremiumAmount}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy Duration
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyDuration"
                       value={updatedData.policyDuration}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <label class="form-label" for="policyId">
+                <div className="col-md-6 mb-4">
+                  <div className="form-outline">
+                    <label className="form-label" for="policyId">
                       Policy Expiry Date
                     </label>
                     <input
                       type="text"
-                      class="form-control form-control-lg"
+                      className="form-control form-control-lg"
                       name="policyExpiryDate"
                       value={updatedData.policyExpiryDate}
                       onChange={handleInputChange}
@@ -253,6 +219,65 @@ function Policy() {
             </form>
           </>
         )}
+        {policies.map((p) => {
+          return (
+            <div className="d-inline-flex m-3">
+              <div className="card ">
+                <div className="card-body">
+                  <p className="card-text" color="blue">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>POLICY IDENTIFIER :</th>
+                          <td>{p.policyID}</td>
+                        </tr>
+                        <tr>
+                          <th>POLICY NAME :</th>
+                          <td>{p.policyName}</td>
+                        </tr>
+                        <tr>
+                          <th>POLICY TYPE :</th>
+                          <td>{p.policyType}</td>
+                        </tr>
+                        <tr>
+                          <th>POLICY DURATION(IN YRS) :</th>
+                          <td>{p.policyDuration}</td>
+                        </tr>
+                        <tr>
+                          <th>POLICY PREMIUM AMOUNT :</th>
+                          <td>{p.policyPremiumAmount}</td>
+                        </tr>
+                        <tr>
+                          <th>POLICY EXPIRY DATE :</th>
+                          <td>{p.policyExpiryDate}</td>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <td>
+                            <button
+                              className="btn btn-warning"
+                              onClick={() => openUpdatePage(p)}
+                            >
+                              Update
+                            </button>
+                          </td>
+                          <span> </span>
+
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => deletePolicy(p.policyID)}
+                          >
+                            Delete
+                          </button>
+                        </tr>
+                      </thead>
+                    </table>
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );

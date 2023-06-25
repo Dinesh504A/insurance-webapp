@@ -1,14 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Navbar from "../Components/Navbar";
 
 function CustomerProfile() {
+  const navigate = useNavigate();
   const [customer, setcustomer] = useState([]);
   const [custompolicy, setcustompolicy] = useState([]);
   const [payment, setpayment] = useState([]);
-
+  const [allpayments, setallpayments] = useState([]);
   const GetCustomerDetails = async () => {
     try {
       const response = await axios.get(
@@ -16,7 +18,9 @@ function CustomerProfile() {
           localStorage.getItem("username")
       );
       console.log(response);
-      setcustomer(response.data);
+      response.data === ""
+        ? navigate("/displaypolicy")
+        : setcustomer(response.data);
     } catch (error) {
       console.error(error.message());
     }
@@ -55,6 +59,17 @@ function CustomerProfile() {
   const closepaymentpage = () => {
     toast.success("Your payment was Successful!!!");
   };
+
+  const getCustomerPayments = async (cid) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8086/api/payment/doneByCust/" + cid
+      );
+      setallpayments(response.data);
+    } catch (error) {
+      console.log(error.message());
+    }
+  };
   useEffect(() => {
     GetCustomerDetails();
   }, []);
@@ -64,7 +79,16 @@ function CustomerProfile() {
       <div className="d-inline-flex m-2">
         <div className="card text-center" style={{ width: "30rem" }}>
           <div className="card-body">
-            <h5 className="card-title">Customer Profile</h5>
+            <h5
+              className="card-title heading-box"
+              style={{
+                border: "2px solid black",
+                padding: "10px",
+                backgroundColor: "lightgray",
+              }}
+            >
+              Customer Profile
+            </h5>
             <table className="table table-striped">
               <thead>
                 <tbody>
@@ -110,10 +134,20 @@ function CustomerProfile() {
             </table>
           </div>
         </div>
+        <span> </span>
 
         <div className="card" style={{ width: "30rem" }}>
           <div className="card-body">
-            <h5 className="card-title">Policy Profile</h5>
+            <h5
+              className="card-title heading-box"
+              style={{
+                border: "2px solid black",
+                padding: "10px",
+                backgroundColor: "lightgray",
+              }}
+            >
+              Policy Profile
+            </h5>
             <table className="table table-striped">
               <thead>
                 <tbody>
@@ -144,8 +178,8 @@ function CustomerProfile() {
                   <tr>
                     <th></th>
                     <td>
-                      <Button
-                        variant="success"
+                      <button
+                        className="btn btn-primary"
                         data-bs-toggle="modal"
                         data-bs-target="#exampleModal"
                         onClick={() => {
@@ -156,8 +190,15 @@ function CustomerProfile() {
                         }}
                       >
                         Pay Monthly Amount
-                      </Button>
+                      </button>
                     </td>
+                    <span> </span>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => getCustomerPayments(customer.customerID)}
+                    >
+                      My Payments
+                    </button>
                   </tr>
                 </tbody>
               </thead>
@@ -165,6 +206,7 @@ function CustomerProfile() {
           </div>
         </div>
       </div>
+      <span> </span>
       <div>
         <div
           className="modal fade"
@@ -237,6 +279,44 @@ function CustomerProfile() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div>
+        <h4
+          className="heading-box"
+          style={{
+            border: "2px solid black",
+            padding: "10px",
+            backgroundColor: "lightgray",
+          }}
+        >
+          My Payment Details
+        </h4>
+
+        <div>
+          <table className="table table-striped">
+            <thead></thead>
+            <tr>
+              <th scope="col">Payment ID</th>
+              <th scope="col">Payment Status</th>
+              <th scope="col">Policy Id</th>
+              <th scope="col">Customer Id</th>
+              <th scope="col">Payment Amount</th>
+            </tr>
+            {allpayments.map((cp) => {
+              return (
+                <tbody>
+                  <tr>
+                    <th scope="row">{cp.paymentId}</th>
+                    <td>{cp.paymentStatus}</td>
+                    <td>{cp.policyId}</td>
+                    <td>{cp.custId}</td>
+                    <td>{cp.policyAmount}</td>
+                  </tr>
+                </tbody>
+              );
+            })}
+          </table>
         </div>
       </div>
     </>

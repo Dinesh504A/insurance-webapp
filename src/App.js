@@ -1,6 +1,12 @@
 import "./App.css";
 import Navbar from "./Components/Navbar";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Policy from "./uipages/Policy";
 import Customer from "./uipages/Customer";
 import AddPolicy from "./uipages/AddPolicy";
@@ -25,7 +31,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />}></Route>
           <Route path="/login" element={<Login />}></Route>
+
           <Route path="/register" element={<Register />}></Route>
+
           <Route path="/displaypolicy" element={<DisplayPolicy />}></Route>
           <Route path="/policy" element={<Policy />} />
           <Route path="/customer" element={<Customer />} />

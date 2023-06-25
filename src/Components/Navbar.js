@@ -3,14 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Navbar() {
-  //const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem("jwttoken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("rolename");
-    toast.success("Logged out successfully");
-    //navigate("/login");
-  };
+  const navigate = useNavigate();
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-primary text-white">
@@ -31,7 +25,7 @@ function Navbar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
-              {localStorage.getItem("rolename") == "ADMIN" ? (
+              {localStorage.getItem("rolename") === "ADMIN" ? (
                 <a
                   className="nav-link active"
                   aria-current="page"
@@ -55,7 +49,8 @@ function Navbar() {
               ) : (
                 <a className="nav-link disabled">Customers</a>
               )}
-              {localStorage.getItem("rolename") === "AGENT" || "ADMIN" ? (
+              {localStorage.getItem("rolename") === "AGENT" ||
+              localStorage.getItem("rolename") === "ADMIN" ? (
                 <a className="nav-link" href="/agents">
                   Agents
                 </a>
@@ -73,13 +68,24 @@ function Navbar() {
               )}
               <span> </span>
 
-              <a
-                className="nav-link "
-                style={{ marginLeft: "auto" }}
-                href="/login"
+              <button
+                className="btn btn-danger"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginLeft: "auto",
+                }}
+                onClick={() => {
+                  localStorage.removeItem("jwttoken");
+                  localStorage.removeItem("username");
+                  localStorage.removeItem("rolename");
+                  toast.success("Logged out successfully");
+                  console.log("All localstorage items are removed");
+                  navigate("/");
+                }}
               >
                 Logout
-              </a>
+              </button>
             </div>
           </div>
         </div>

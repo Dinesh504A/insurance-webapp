@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Navbar from "../Components/Navbar";
 
 function Payment() {
+  const navigate = useNavigate();
   const [payment, getpayment] = useState([]);
   const [customer, setcustomer] = useState([]);
 

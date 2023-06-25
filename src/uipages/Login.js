@@ -10,11 +10,15 @@ const Login = () => {
   const [formErrors, setformErrors] = useState({});
   const [loginErrors, setloginErros] = useState("");
   const handleLogin = async () => {
-    const errors = validateForm();
-    setformErrors(errors);
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
+    const errorsOccured = validateForm();
+
+    setformErrors(errorsOccured);
+    console.log(errorsOccured);
+    //console.log(setformErrors);
+    console.log(formErrors);
+    //if (Object.keys(errorsOccured).length > 0) {
+    // return;
+    //}
     try {
       const response = await axios.post("http://localhost:8090/authenticate", {
         email,
@@ -26,11 +30,14 @@ const Login = () => {
       localStorage.setItem("jwttoken", jwttoken);
       localStorage.setItem("username", username);
       localStorage.setItem("rolename", rolename);
-      if (rolename === "ADMIN") {
+      if (rolename.toUpperCase() === "ADMIN") {
+        console.log("navigating to admin pages");
         navigate("/adminaddpolicy");
-      } else if (rolename === "AGENT") {
+      } else if (rolename.toUpperCase() === "AGENT") {
+        console.log("navigating to agent pages");
         navigate("/displaypolicy");
-      } else if (rolename === "USER") {
+      } else if (rolename.toUpperCase() === "USER") {
+        console.log("navigating to profile page");
         navigate("/profile");
       } else {
         navigate("/login");
@@ -38,7 +45,7 @@ const Login = () => {
       toast.success("Login successful");
       setloginErros("");
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error) {
         setloginErros("Invalid email or password");
         toast.error("Invalid email or password");
         setemail("");
@@ -53,14 +60,17 @@ const Login = () => {
     }
   };
   const validateForm = () => {
-    let errors = {};
+    let errors = [];
     if (!email) {
       errors.email = "Email is required";
+      console.log(errors.email);
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       errors.email = "Invalid email address";
+      console.log(errors.email);
     }
     if (!password) {
-      errors.password("Password is required");
+      errors.password = "Password is required";
+      console.log(errors.password);
     }
     return errors;
   };
@@ -95,8 +105,10 @@ const Login = () => {
                       setemail(e.target.value);
                     }}
                   />
-                  {formErrors.email && (
-                    <div className="invalid-feedback">{formErrors.email}</div>
+                  {formErrors.password && (
+                    <div className="invalid-feedback">
+                      {formErrors.password}
+                    </div>
                   )}
                 </div>
 
@@ -131,7 +143,7 @@ const Login = () => {
                     id="form1Example3"
                   />
                   <label className="form-check-label" for="form1Example3">
-                    {" "}
+                    <span> </span>
                     Remember password{" "}
                   </label>
                 </div>
@@ -141,11 +153,12 @@ const Login = () => {
                   type="submit"
                   onClick={handleLogin}
                 >
-                  Login
+                  Log in
                 </button>
               </div>
               <p className="not-a-member-signup text-right mt-2">
-                Not A Member <Link to="/register">Register Here</Link>
+                Not A Member ? <span> </span>{" "}
+                <Link to="/register">Register Here</Link>
               </p>
             </div>
           </div>

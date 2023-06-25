@@ -85,7 +85,9 @@ function Agent() {
   };
   const openWindow = (data) => {
     setselectedagent(data);
-    setagentId(data.agentId);
+    console.log(data);
+    setagentId(data.id);
+    localStorage.setItem("aid", agentId);
     setcid("");
   };
   const closeWindow = () => {
@@ -95,10 +97,11 @@ function Agent() {
   };
 
   const addCustomertoAgent = async () => {
-    const agentIdVariable = sessionStorage.getItem("agentId");
     try {
+      //const agenttoadd = localStorage.getItem("aid");
+      //console.log(agenttoadd);
       await axios.post(
-        "http://localhost:8088/api/agent/" + agentIdVariable + "/addcustomer",
+        "http://localhost:8088/api/agent/" + selectedagent.id + "/addcustomer",
         customerData
       );
       toast.success("Customer added successfully");

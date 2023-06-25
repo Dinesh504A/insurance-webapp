@@ -40,8 +40,8 @@ function Customer() {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
-          console.log(res);
+          //console.log(res);
+          console.log(res.policyResponse);
           setcustompolicy(res.policyResponse);
         })
         .catch((err) => {
@@ -320,6 +320,7 @@ function Customer() {
                     <button
                       type="button"
                       className="btn btn-primary"
+                      data-bs-dismiss="modal"
                       onClick={updateCustomer}
                     >
                       Save Changes

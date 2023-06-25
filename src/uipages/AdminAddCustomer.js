@@ -13,8 +13,8 @@ const CustomerForm = () => {
   const [dateofBirth, setdateofBirth] = useState("");
   const [policyId, setpolicyId] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
+    //event.preventDefault();
 
     try {
       const response = await axios.post("http://localhost:8084/api/customer", {
@@ -44,7 +44,7 @@ const CustomerForm = () => {
       console.error(error.message);
     }
 
-    navigate("/");
+    navigate("/profile");
   };
 
   return (
@@ -160,7 +160,25 @@ const CustomerForm = () => {
                         <button
                           type="button"
                           className="btn btn-warning btn-lg ms-2"
-                          onClick={handleSubmit}
+                          onClick={() => {
+                            if (
+                              customerName.trim() !== "" &&
+                              phoneNumber.trim() !== "" &&
+                              dateofBirth.trim() !== "" &&
+                              emailId.trim() !== ""
+                            ) {
+                              {
+                                handleSubmit();
+                              }
+                            } else {
+                              setcustomerName("");
+                              setPhoneNumber("");
+                              setEmailId("");
+                              setdateofBirth("");
+                              setpolicyId("");
+                              toast.info("All input fields must be filled");
+                            }
+                          }}
                         >
                           Add Customer
                         </button>
