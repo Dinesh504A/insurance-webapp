@@ -32,9 +32,9 @@ const Registration = () => {
       console.log("Registration Successful", response.data);
 
       toast.success("Registration Success");
-      rolename === "ADMIN"
+      rolename.toUpperCase() === "ADMIN"
         ? navigate("/policy")
-        : navigate("/adminaddcustomer");
+        : navigate("/displaypolicy");
       setname("");
       setemail("");
       setpassword("");

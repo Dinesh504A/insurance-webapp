@@ -16,7 +16,7 @@ function Navbar() {
       <nav className="navbar navbar-expand-lg navbar-light bg-primary text-white">
         <div className="container-fluid ">
           <a className="navbar-brand " href="/">
-            INSURANCE WEB APP
+            <b>POLICY BAZAAR</b>
           </a>
           <button
             className="navbar-toggler"
@@ -31,34 +31,55 @@ function Navbar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div className="navbar-nav">
-              <a className="nav-link active" aria-current="page" href="/">
-                Home
-              </a>
-              <a className="nav-link" href="/customer">
-                Customers
-              </a>
-              <a className="nav-link" href="/agents">
-                Agents
-              </a>
-              <a className="nav-link " href="/payments" tabindex="-1">
-                Payments
-              </a>
+              {localStorage.getItem("rolename") == "ADMIN" ? (
+                <a
+                  className="nav-link active"
+                  aria-current="page"
+                  href="/policy"
+                >
+                  Our Policies
+                </a>
+              ) : (
+                <a
+                  className="nav-link active"
+                  aria-current="page"
+                  href="/displaypolicy"
+                >
+                  Our Policies
+                </a>
+              )}
+              {localStorage.getItem("rolename") === "ADMIN" ? (
+                <a className="nav-link" href="/customer">
+                  Customers
+                </a>
+              ) : (
+                <a className="nav-link disabled">Customers</a>
+              )}
+              {localStorage.getItem("rolename") === "AGENT" || "ADMIN" ? (
+                <a className="nav-link" href="/agents">
+                  Agents
+                </a>
+              ) : (
+                <a className="nav-link disabled">Agents</a>
+              )}
+              {localStorage.getItem("rolename") === "ADMIN" ? (
+                <a className="nav-link " href="/payments" tabIndex="-1">
+                  Payments
+                </a>
+              ) : (
+                <a className="nav-link disabled " tabIndex="-1">
+                  Payments
+                </a>
+              )}
               <span> </span>
+
               <a
                 className="nav-link "
+                style={{ marginLeft: "auto" }}
                 href="/login"
-                tabindex="-1"
-                style={{ float: "right" }}
               >
-                Log In
+                Logout
               </a>
-              <a className="nav-link " href="/register" tabindex="-1">
-                Sign Up
-              </a>
-              <button
-                className="nav-link logout-button"
-                onClick={handleLogout}
-              ></button>
             </div>
           </div>
         </div>

@@ -14,6 +14,7 @@ import Register from "./uipages/Registration";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import CustomerProfile from "./uipages/CustomerProfile";
+import DisplayPolicy from "./uipages/DisplayPolicy";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Login />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
+          <Route path="/displaypolicy" element={<DisplayPolicy />}></Route>
           <Route path="/policy" element={<Policy />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/addPolicy" element={<AddPolicy />} />

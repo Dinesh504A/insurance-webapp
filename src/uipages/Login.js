@@ -29,7 +29,7 @@ const Login = () => {
       if (rolename === "ADMIN") {
         navigate("/adminaddpolicy");
       } else if (rolename === "AGENT") {
-        navigate("/agents");
+        navigate("/displaypolicy");
       } else if (rolename === "USER") {
         navigate("/profile");
       } else {
